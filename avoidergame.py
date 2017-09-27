@@ -27,7 +27,7 @@ enemy_speed = 2
 pygame.key.set_repeat(60,20)
 
 # Create the avatar, along with a list to store enemies
-avatar = Avatar(display_width * 0.5, display_height * 0.8, avatar_speed, "player1.gif")
+avatar = Avatar(display_width * 0.5, display_height * 0.8, avatar_speed, "./sprites/player1.gif")
 army = []
 
 # Creates a score board
@@ -53,7 +53,7 @@ def update_mobs():
 def spawn_mobs():
     if random.random() < 0.1:
         random_x = random.random() * display_width
-        new_enemy = Enemy(random_x, -20, enemy_speed, "enemy1.gif")
+        new_enemy = Enemy(random_x, -20, enemy_speed, "./sprites/enemy1.gif")
         army.append(new_enemy)
 
 # Main game loop
