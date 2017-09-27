@@ -11,8 +11,8 @@ class Mobile:
 
         # Handling sprites
         self.sprite = pygame.image.load(sprite)
-        #self.rect = sprite.get_rect()
-        #self.width, self.height = rect.get_size()
+        self.rect = self.sprite.get_rect()
+        self.width, self.height = self.sprite.get_size()
 
     # Updating mob coordinates
     def move_a_bit(self, x_change, y_change):

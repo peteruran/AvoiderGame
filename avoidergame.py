@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 from mobs import *
+from gamescore import *
 
 pygame.init()
 
@@ -22,11 +23,17 @@ game_over = False
 avatar_speed = 5
 enemy_speed = 2
 
+# Ads key repetition, for smooth movement
+pygame.key.set_repeat(60,20)
+
 # Create the avatar, along with a list to store enemies
 avatar = Avatar(display_width * 0.5, display_height * 0.8, avatar_speed, "player1.gif")
 army = []
 
-# Updates graphics of all mobs, along with despawning enemies
+# Creates a score board
+game_score = GameScore(text_size=40, text_color=black, x=15, y=15)
+
+# Updates graphics of all mobs, along with despawning enemies and checking for collisions
 def update_mobs():
     gameDisplay.blit( avatar.sprite, avatar.get_coordinates() )
 
@@ -35,9 +42,14 @@ def update_mobs():
         gameDisplay.blit( enemy.sprite, enemy.get_coordinates() )
         if enemy.y > display_height:
             army.remove(enemy)
-            #game_score += 10
+            game_score.add_to_value(10)
 
-# Spawning new enemies
+        # Checking for collisions with the avatar
+        if enemy.rect.colliderect(avatar.rect):
+            game_over = True
+            print("collision")
+
+# Spawning new enemies and adds them to the list
 def spawn_mobs():
     if random.random() < 0.1:
         random_x = random.random() * display_width
@@ -48,7 +60,7 @@ def spawn_mobs():
 while not game_over:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            gameOver = True
+            game_over = True
 
         # Register key presses and refresh coordinates
         keys_pressed = pygame.key.get_pressed()
@@ -73,8 +85,9 @@ while not game_over:
     gameDisplay.fill(white)
     spawn_mobs()
     update_mobs()
+    gameDisplay.blit( game_score.get_string(), game_score.get_position() )
     pygame.display.update()
-    clock.tick(100)
+    clock.tick(70)
 
 pygame.quit()
 quit()
