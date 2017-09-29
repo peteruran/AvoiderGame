@@ -13,17 +13,39 @@ class Mobile:
         self.y_direction = 0
 
         # Handling sprites
-        self.sprites = sprites
-        self.current_sprite_name = sprites[0]
+        self.sprites = [pygame.image.load("sprites/" + img) for img in sprites]
+        self.sprite_index = 0
         self.next_sprite()
+        self.sprite_facing_right = True
+        self.mob_facing_right = True
 
-    # Updating mob coordinates
+        # Keeping track of time for sprite update
+        self.sprite_timer = 0
+
+    def flip_sprite(self):
+        if self.x_direction == 1:
+            self.mob_facing_right = True
+        elif self.x_direction == -1:
+            self.mob_facing_right = False
+
+        if not (self.sprite_facing_right == self.mob_facing_right):
+            self.sprite_facing_right = not self.sprite_facing_right
+            self.sprite = pygame.transform.flip(self.sprite, True, False)
+
+        # Increment lifetime on each time
+        self.sprite_timer += 1
+        if self.sprite_timer > 100:
+            self.next_sprite()
+            self.sprite_timer = 0
+
     def move_a_bit(self):
+        self.flip_sprite()
         # Diagonal movement
         if abs(self.x_direction) == 1 and abs(self.y_direction) == 1:
             self.x_direction *= 0.7
             self.y_direction *= 0.7
 
+        # Updating mob coordinates
         self.x += self.x_direction * self.speed
         self.y += self.y_direction * self.speed
 
@@ -45,10 +67,12 @@ class Mobile:
 
     # Load next sprite and update dimensions
     def next_sprite(self):
-        self.current_sprite_name = self.sprites[ self.sprites.index(self.current_sprite_name) + 1 % (len(self.sprites) - 1) ]
-        self.sprite = pygame.image.load("./sprites/" + str(self.sprites[0]) )
+        self.sprite = self.sprites[self.sprite_index]
         self.rect = self.sprite.get_rect()
         self.width, self.height = self.sprite.get_size()
+        self.sprite_index = ( self.sprite_index + 1 ) % len(self.sprites)
+        self.sprite_facing_right = True
+
 
 # Subclass for the avatar
 class Avatar(Mobile):

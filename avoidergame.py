@@ -24,7 +24,7 @@ class AvoiderGame:
 
         # Handing lists of sprite graphics
         self.avatar_sprites = ['player1.gif', 'player2.gif']
-        self.enemy_sprites = ['enemy1.gif', 'enemy.gif']
+        self.enemy_sprites = ['enemy1.gif', 'enemy2.gif']
 
         # Set spawn rate per tick
         self.spawn_rate = 0.05
@@ -39,17 +39,14 @@ class AvoiderGame:
     # Updates graphics of all mobs, along with despawning enemies and checking for collisions
     def update_mobs(self):
         self.game_display.blit( self.avatar.sprite, self.avatar.get_coordinates() )
-        if pygame.time.get_ticks() % 1000 == 0:
-            print("update")
-            self.avatar.next_sprite()
 
         # Enemy movement, collision, sprite update and despawning
         for enemy in self.army:
             enemy.y_direction = 1
             enemy.move_a_bit()
             self.game_display.blit( enemy.sprite, enemy.get_coordinates() )
-            if pygame.time.get_ticks() % 1000 == 0:
-                self.avatar.next_sprite()
+
+            # Despawn enemy and increment score
             if enemy.y > self.display_height:
                 self.army.remove(enemy)
                 self.game_score.add_to_value(10)
@@ -94,7 +91,7 @@ class AvoiderGame:
                         self.avatar.y_direction = 1
 
             self.avatar.move_a_bit()
-
+            
             # Refresh the display, along with updating mobs
             self.game_display.fill(self.white)
             self.spawn_mobs()
