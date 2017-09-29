@@ -16,20 +16,18 @@ class AvoiderGame:
         self.black = (0,0,0)
         self.white = (255,255,255)
 
-        # Set the game clock
-
         self.game_over = False
 
         # Set mob speeds
-        self.avatar_speed = 5
-        self.enemy_speed = 2
+        self.avatar_speed = 2
+        self.enemy_speed = 1
 
         # Handing lists of sprite graphics
         self.avatar_sprites = ['player1.gif', 'player2.gif']
         self.enemy_sprites = ['enemy1.gif', 'enemy.gif']
 
-        # Ads key repetition, for smooth movement
-        pygame.key.set_repeat(60,20)
+        # Set spawn rate per tick
+        self.spawn_rate = 0.05
 
         # Create the avatar, along with a list to store enemies
         self.avatar = Avatar(self.display_width * 0.5, self.display_height * 0.8, self.avatar_speed, self.avatar_sprites)
@@ -47,7 +45,8 @@ class AvoiderGame:
 
         # Enemy movement, collision, sprite update and despawning
         for enemy in self.army:
-            enemy.move_a_bit(0,1)
+            enemy.y_direction = 1
+            enemy.move_a_bit()
             self.game_display.blit( enemy.sprite, enemy.get_coordinates() )
             if pygame.time.get_ticks() % 1000 == 0:
                 self.avatar.next_sprite()
@@ -61,7 +60,7 @@ class AvoiderGame:
 
     # Spawning new enemies and adds them to the list
     def spawn_mobs(self):
-        if random.random() < 0.1:
+        if random.random() < self.spawn_rate:
             random_x = random.random() * self.display_width
             new_enemy = Enemy(random_x, -20, self.enemy_speed, self.enemy_sprites)
             self.army.append(new_enemy)
@@ -73,24 +72,28 @@ class AvoiderGame:
                 if event.type == pygame.QUIT:
                     self.game_over = True
 
-                # Register key presses and refresh coordinates
-                keys_pressed = pygame.key.get_pressed()
-                x_change = 0; y_change = 0
-                if keys_pressed[pygame.K_UP]:
-                     y_change = -1
-                if keys_pressed[pygame.K_DOWN]:
-                    y_change = 1
-                if keys_pressed[pygame.K_LEFT]:
-                    x_change = -1
-                if keys_pressed[pygame.K_RIGHT]:
-                    x_change = 1
+                # Register key presses and control movement direction
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        self.avatar.x_direction = 0
+                    if event.key == pygame.K_RIGHT:
+                        self.avatar.x_direction = 0
+                    if event.key == pygame.K_UP:
+                        self.avatar.y_direction = 0
+                    if event.key == pygame.K_DOWN:
+                        self.avatar.y_direction = 0
 
-                # Diagonal movement
-                if x_change != 0 and y_change != 0:
-                    x_change *= 0.7
-                    y_change *= 0.7
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        self.avatar.x_direction = -1
+                    if event.key == pygame.K_RIGHT:
+                        self.avatar.x_direction = 1
+                    if event.key == pygame.K_UP:
+                        self.avatar.y_direction = -1
+                    if event.key == pygame.K_DOWN:
+                        self.avatar.y_direction = 1
 
-                self.avatar.move_a_bit(x_change, y_change)
+            self.avatar.move_a_bit()
 
             # Refresh the display, along with updating mobs
             self.game_display.fill(self.white)

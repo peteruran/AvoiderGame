@@ -7,7 +7,10 @@ class Mobile:
         self.x = start_x
         self.y = start_y
 
+        # Variables for storing speed and movement directions
         self.speed = speed
+        self.x_direction = 0
+        self.y_direction = 0
 
         # Handling sprites
         self.sprites = sprites
@@ -15,9 +18,14 @@ class Mobile:
         self.next_sprite()
 
     # Updating mob coordinates
-    def move_a_bit(self, x_change, y_change):
-        self.x += x_change * self.speed
-        self.y += y_change * self.speed
+    def move_a_bit(self):
+        # Diagonal movement
+        if abs(self.x_direction) == 1 and abs(self.y_direction) == 1:
+            self.x_direction *= 0.7
+            self.y_direction *= 0.7
+
+        self.x += self.x_direction * self.speed
+        self.y += self.y_direction * self.speed
 
     # Getting coordinates as a tuple
     def get_coordinates(self):
