@@ -8,6 +8,8 @@ display_width = 800
 display_height = 600
 game_display = pygame.display.set_mode( (display_width, display_height) )
 pygame.display.set_caption('Avoider Game')
+game_icon = pygame.image.load('sprites/player1.gif')
+pygame.display.set_icon(game_icon)
 
 # Set the game clock
 clock = pygame.time.Clock()
